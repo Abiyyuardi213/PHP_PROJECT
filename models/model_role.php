@@ -1,28 +1,36 @@
 <?php
-
 require_once 'nodes/node_role.php';
 
 class modelRole {
     private $roles = [];
-    private $nextId = 1;
 
     public function __construct() {
         if (isset($_SESSION['roles'])) {
             $this->roles = unserialize($_SESSION['roles']);
-            $this->nextId = count($this->roles) + 1;
         } else {
             $this->initializeDefaultRole();
         }
     }
 
+    private function getLastID() {
+        $maxId = 0;
+        foreach ($this->roles as $role) {
+            if ($role->role_id > $maxId) {
+                $maxId = $role->role_id;
+            }
+        }
+        return $maxId;
+    }
+
     public function initializeDefaultRole() {
         if (empty($this->roles)) {
-            $this->addRole("sofia", "mahasiswa", 450000, 1); // Add default role
+            $this->addRole("Mahasiswa", "Student", 450000, 1);
         }
     }
 
     public function addRole($role_name, $role_description, $role_salary, $role_status) {
-        $peran = new Role($this->nextId++, $role_name, $role_description, $role_salary, $role_status);
+        $newId = $this->getLastID() + 1;
+        $peran = new Role($newId, $role_name, $role_description, $role_salary, $role_status);
         $this->roles[] = $peran;
         $this->saveToSession();
     }
@@ -31,7 +39,7 @@ class modelRole {
         $_SESSION['roles'] = serialize($this->roles);
     }
 
-    public function getAllRole() {
+    public function getAllRoles() {
         return $this->roles;
     }
 
@@ -59,6 +67,24 @@ class modelRole {
             }
         }
         return false;
+    }
+
+    public function getRoleNameById($role_id) {
+        foreach ($this->roles as $role) {
+            if ($role->role_id == $role_id) {
+                return $role->role_name;
+            }
+        }
+        return null;
+    }
+
+    public function getRoleIdByName($role_name) {
+        foreach ($this->roles as $role) {
+            if ($role->role_name === $role_name) {
+                return $role->role_id;
+            }
+        }
+        return null; // Role not found
     }
 }
 ?>

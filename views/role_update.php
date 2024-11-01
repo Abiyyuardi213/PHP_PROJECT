@@ -7,8 +7,6 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 flex">
-
-    <!-- Sidebar -->
     <aside class="w-64 bg-gradient-to-b from-blue-700 to-indigo-800 text-white min-h-screen flex flex-col shadow-lg">
         <div class="p-6 text-center">
             <h2 class="text-3xl font-bold mb-4">Warehouse Management System</h2>
@@ -29,13 +27,11 @@
         </footer>
     </aside>
 
-    <!-- Main Content -->
     <main class="flex-grow p-6">
         <header class="mb-6">
             <h1 class="text-3xl font-semibold text-gray-700">Update Role</h1>
         </header>
 
-        <!-- Update Role Form -->
         <form method="POST" class="bg-white p-6 rounded-lg shadow-md">
             <div class="mb-4">
                 <label class="block text-gray-700">Role Name</label>
@@ -62,6 +58,5 @@
             </div>
         </form>
     </main>
-
 </body>
 </html>

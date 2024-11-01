@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Role Management System</title>
+    <title>Update User</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="https://unpkg.com/@heroicons/react@1.0.6/solid" defer></script>
 </head>
 <body class="bg-gray-100 flex">
     <aside class="w-64 bg-gradient-to-b from-blue-700 to-indigo-800 text-white min-h-screen flex flex-col shadow-lg">
@@ -13,7 +12,7 @@
             <h2 class="text-3xl font-bold mb-4">ITATS Management System</h2>
         </div>
         <nav class="flex-grow px-4">
-            <a href="#" class="flex items-center gap-2 py-3 px-4 rounded-lg hover:bg-indigo-700 transition-colors">
+            <a href="index.php?modul=dashboard" class="flex items-center gap-2 py-3 px-4 rounded-lg hover:bg-indigo-700 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11a1 1 0 11-2 0V9a1 1 0 112 0v4zm-1-7a1 1 0 100 2 1 1 0 000-2z"/>
                 </svg>
@@ -33,38 +32,47 @@
                 </svg>
                 <span>Manage User</span>
             </a>
-            <a href="#" class="flex items-center gap-2 py-3 px-4 rounded-lg hover:bg-indigo-700 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M5 3a3 3 0 00-3 3v8a3 3 0 003 3h6.586a3 3 0 002.121-.879l3.414-3.414A3 3 0 0018 10.414V6a3 3 0 00-3-3H5zM3 6a2 2 0 012-2h10a2 2 0 012 2v4.414a2 2 0 01-.586 1.414l-3.414 3.414A2 2 0 0111.586 16H5a2 2 0 01-2-2V6z" clip-rule="evenodd"/>
-                </svg>
-                <span>Inventory</span>
-            </a>
         </nav>
         <footer class="p-4 text-center mt-auto">
-            <button class="bg-red-500 text-white px-4 py-2 rounded-full transform transition hover:scale-105 hover:shadow-lg">Logout</button>
+            <button class="bg-red-500 text-white px-4 py-2 rounded-full">Logout</button>
         </footer>
     </aside>
 
     <main class="flex-grow p-6">
         <header class="mb-6">
-            <h1 class="text-3xl font-semibold text-gray-700">Ini halaman kosong</h1>
+            <h1 class="text-3xl font-semibold text-gray-700">Update User</h1>
         </header>
+
+        <form method="POST" action="index.php?modul=user&fitur=update&user_id=<?php echo($user_id)?>" class="bg-white p-6 rounded-lg shadow-md">
+            <input type="hidden" name="user_id" value="<?= htmlspecialchars($current_user->user_id) ?>">
+            
+            <div class="mb-4">
+                <label class="block text-gray-700">User Name</label>
+                <input type="text" name="user_name" class="w-full px-4 py-2 border rounded" value="<?= htmlspecialchars($current_user->user_name) ?>" required>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700">Username for Login</label>
+                <input type="text" name="username" class="w-full px-4 py-2 border rounded" value="<?= htmlspecialchars($current_user->username) ?>" required>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700">Password</label>
+                <input type="password" name="password" class="w-full px-4 py-2 border rounded" placeholder="Leave blank to keep current password">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700">Role</label>
+                <select name="role_id" class="w-full px-4 py-2 border rounded">
+                    <?php foreach ($roles as $role): ?>
+                        <option value="<?= htmlspecialchars($role->role_id) ?>" <?= ($current_user->role_id == $role->role_id) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($role->role_name) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="flex justify-end">
+                <a href="index.php?modul=user&fitur=list" class="bg-gray-500 text-white px-4 py-2 rounded-full mr-4">Cancel</a>
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-full">Update</button>
+            </div>
+        </form>
     </main>
-
-    <!-- <script>
-        function openAddModal() {
-            document.getElementById('modalTitle').innerText = 'Add Item';
-            document.getElementById('modal').classList.remove('hidden');
-        }
-        
-        function openEditModal() {
-            document.getElementById('modalTitle').innerText = 'Edit Item';
-            document.getElementById('modal').classList.remove('hidden');
-        }
-
-        function closeModal() {
-            document.getElementById('modal').classList.add('hidden');
-        }
-    </script> -->
 </body>
 </html>
