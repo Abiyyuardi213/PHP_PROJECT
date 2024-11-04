@@ -4,16 +4,16 @@ class Barang {
     public $barang_name;
     public $barang_stock;
     public $barang_supplier;
-    public $create_at;
     public $barang_status;
+    public $create_at;
 
-    function __construct($barang_id, $barang_name, $barang_stock, $barang_supplier, $barang_status) {
-        $this->barang_id = $barang_id;
-        $this->barang_name = $barang_name;
-        $this->barang_stock = $barang_stock;
-        $this->barang_supplier = $barang_supplier;
-        $this->barang_status = $barang_status;
-        $this->create_at = date("Y-m-d H:i:s");
+    public function __construct($id, $name, $stock, $supplier, $status, $create_at) {
+        $this->barang_id = $id;
+        $this->barang_name = $name;
+        $this->barang_stock = $stock;
+        $this->barang_supplier = $supplier;
+        $this->barang_status = $status;
+        $this->create_at = $create_at;
     }
 }
 ?>

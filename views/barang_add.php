@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Role</title>
+    <title>Add New Inventory</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 flex">
     <aside class="w-64 bg-gradient-to-b from-blue-700 to-indigo-800 text-white min-h-screen flex flex-col shadow-lg">
         <div class="p-6 text-center">
-            <h2 class="text-3xl font-bold mb-4">Warehouse Management System</h2>
+            <h2 class="text-3xl font-bold mb-4">ITATS Management System</h2>
         </div>
         <nav class="flex-grow px-4">
-        <a href="index.php?modul=dashboard" class="flex items-center gap-2 py-3 px-4 rounded-lg hover:bg-indigo-700 transition-colors">
+            <a href="index.php?modul=dashboard" class="flex items-center gap-2 py-3 px-4 rounded-lg hover:bg-indigo-700 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11a1 1 0 11-2 0V9a1 1 0 112 0v4zm-1-7a1 1 0 100 2 1 1 0 000-2z"/>
                 </svg>
@@ -43,40 +43,35 @@
                 <span>Transaction</span>
             </a>
         </nav>
-        <footer class="p-4 text-center mt-auto">
-            <button class="bg-red-500 text-white px-4 py-2 rounded-full">Logout</button>
-        </footer>
     </aside>
 
     <main class="flex-grow p-6">
-        <header class="mb-6">
-            <h1 class="text-3xl font-semibold text-gray-700">Update Role</h1>
+        <header class="mb-6 flex justify-between items-center">
+            <h1 class="text-3xl font-semibold text-gray-700">Add New Inventory</h1>
+            <a href="index.php?modul=barang&fitur=list" class="bg-gray-500 text-white px-4 py-2 rounded-lg">Back to Inventory List</a>
         </header>
 
-        <form method="POST" class="bg-white p-6 rounded-lg shadow-md">
+        <form action="index.php?modul=barang&fitur=add" method="POST" class="bg-white p-6 rounded-lg shadow-md">
             <div class="mb-4">
-                <label class="block text-gray-700">Role Name</label>
-                <input type="text" name="role_name" class="w-full px-4 py-2 border rounded" value="<?= htmlspecialchars($current_role->role_name) ?>" required>
+                <label for="barang_name" class="block text-gray-700">Inventory Name</label>
+                <input type="text" id="barang_name" name="barang_name" class="mt-2 p-2 w-full border border-gray-300 rounded-lg" required>
             </div>
             <div class="mb-4">
-                <label class="block text-gray-700">Role Description</label>
-                <input type="text" name="role_description" class="w-full px-4 py-2 border rounded" value="<?= htmlspecialchars($current_role->role_description) ?>" required>
+                <label for="barang_stock" class="block text-gray-700">Inventory Stock</label>
+                <input type="number" id="barang_stock" name="barang_stock" class="mt-2 p-2 w-full border border-gray-300 rounded-lg" required>
             </div>
             <div class="mb-4">
-                <label class="block text-gray-700">Role Salary</label>
-                <input type="number" name="role_salary" class="w-full px-4 py-2 border rounded" value="<?= htmlspecialchars($current_role->role_salary) ?>" required>
+                <label for="barang_supplier" class="block text-gray-700">Inventory Supplier</label>
+                <input type="text" id="barang_supplier" name="barang_supplier" class="mt-2 p-2 w-full border border-gray-300 rounded-lg" required>
             </div>
             <div class="mb-4">
-                <label class="block text-gray-700">Role Status</label>
-                <select name="role_status" class="w-full px-4 py-2 border rounded">
-                    <option value="1" <?= $current_role->role_status == 1 ? 'selected' : '' ?>>Active</option>
-                    <option value="0" <?= $current_role->role_status == 0 ? 'selected' : '' ?>>Inactive</option>
+                <label for="barang_status" class="block text-gray-700">Inventory Status</label>
+                <select id="barang_status" name="barang_status" class="mt-2 p-2 w-full border border-gray-300 rounded-lg" required>
+                    <option value="1">Available</option>
+                    <option value="0">Out of Stock</option>
                 </select>
             </div>
-            <div class="flex justify-end">
-                <a href="index.php?modul=role&fitur=list" class="bg-gray-500 text-white px-4 py-2 rounded-full mr-4">Cancel</a>
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-full">Update</button>
-            </div>
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg">Add Inventory</button>
         </form>
     </main>
 </body>
