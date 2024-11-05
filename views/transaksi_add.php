@@ -1,8 +1,18 @@
 <?php
+require_once 'models/model_transaksi.php';
+require_once 'models/model_user.php';
 require_once 'models/model_barang.php';
+require_once 'models/model_role.php';
 
-$obj_barang = new modelBarang();
-$barangs = $obj_barang->getAllBarangs();
+$roleModel = new modelRole();
+$userModel = new modelUser($roleModel);
+$barangModel = new modelBarang();
+$transaksiModel = new modelTransaksi($userModel, $barangModel);
+
+$users = $userModel->getAllUsers();
+$barangs = $barangModel->getAllBarangs();
+
+$transactions = $transaksiModel->getAllTransaction()
 ?>
 
 <!DOCTYPE html>
@@ -10,11 +20,10 @@ $barangs = $obj_barang->getAllBarangs();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory Management System</title>
+    <title>Add New Transaction</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 flex">
-    <!-- Sidebar code here -->
     <aside class="w-64 bg-gradient-to-b from-blue-700 to-indigo-800 text-white min-h-screen flex flex-col shadow-lg">
         <div class="p-6 text-center">
             <h2 class="text-3xl font-bold mb-4">ITATS Management System</h2>
@@ -51,65 +60,44 @@ $barangs = $obj_barang->getAllBarangs();
                 <span>Transaction</span>
             </a>
         </nav>
-        <footer class="p-4 text-center mt-auto">
-            <button class="bg-red-500 text-white px-4 py-2 rounded-full transform transition hover:scale-105 hover:shadow-lg">Logout</button>
-        </footer>
     </aside>
-    
+
     <main class="flex-grow p-6">
-        <header class="mb-6">
-            <h1 class="text-3xl font-semibold text-gray-700">Manage Inventory</h1>
+        <header class="mb-6 flex justify-between items-center">
+            <h1 class="text-3xl font-semibold text-gray-700">Add New Transaction</h1>
+            <a href="index.php?modul=transaksi&fitur=list" class="bg-gray-500 text-white px-4 py-2 rounded-lg">Back to Transaction List</a>
         </header>
 
-        <?php if (isset($_SESSION['message'])): ?>
-            <div class="mb-4 p-4 bg-green-100 text-green-800 rounded-lg">
-                <?= htmlspecialchars($_SESSION['message']) ?>
-            </div>
-            <?php unset($_SESSION['message']); ?>
-        <?php endif; ?>
-
-        <div class="mb-4 flex justify-end">
-            <a href="index.php?modul=barang&fitur=add" class="bg-gradient-to-r from-green-400 to-green-500 text-white px-5 py-2 rounded-full shadow-md transform transition hover:scale-105 hover:shadow-lg">
-                Add New Item
-            </a>
-        </div>
-        <div class="overflow-x-auto bg-white rounded-lg shadow-lg">
-            <table class="min-w-full bg-white">
-            <thead class="bg-indigo-100 text-indigo-600 uppercase text-sm leading-normal">
-                <tr>
-                    <th class="py-3 px-6 text-left">Item ID</th>
-                    <th class="py-3 px-6 text-left">Item Name</th>
-                    <th class="py-3 px-6 text-left">Stock</th>
-                    <th class="py-3 px-6 text-left">Supplier</th>
-                    <th class="py-3 px-6 text-left">Status</th>
-                    <th class="py-3 px-6 text-left">Create At</th>
-                    <th class="py-3 px-6 text-center">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="text-gray-600 text-sm font-light">
-                <?php if (empty($barangs)): ?>
-                    <tr>
-                        <td colspan="7" class="text-center py-4 text-gray-500">No items found</td>
-                    </tr>
-                <?php else: ?>
-                    <?php foreach ($barangs as $barang): ?>
-                    <tr class="border-b border-gray-200 hover:bg-gray-100">
-                        <td class="py-3 px-6 text-left"><?= htmlspecialchars($barang->barang_id) ?></td>
-                        <td class="py-3 px-6 text-left"><?= htmlspecialchars($barang->barang_name) ?></td>
-                        <td class="py-3 px-6 text-left"><?= htmlspecialchars($barang->barang_stock) ?></td>
-                        <td class="py-3 px-6 text-left"><?= htmlspecialchars($barang->barang_supplier) ?></td>
-                        <td class="py-3 px-6 text-left"><?= $barang->barang_status == 1 ? 'Available' : 'Out of Stock' ?></td>
-                        <td class="py-3 px-6 text-left"><?= htmlspecialchars($barang->create_at) ?></td>
-                        <td class="py-3 px-6 text-center">
-                            <a href="index.php?modul=barang&fitur=update&barang_id=<?= htmlspecialchars($barang->barang_id) ?>" class="bg-yellow-400 text-white px-3 py-1 rounded-full transform transition hover:scale-110 hover:bg-yellow-500">Update</a>
-                            <button onclick="window.location.href='index.php?modul=barang&fitur=delete&id=<?= htmlspecialchars($barang->barang_id) ?>'" class="bg-red-500 text-white px-3 py-1 rounded-full transform transition hover:scale-110 hover:bg-red-600">Delete</button>
-                        </td>
-                    </tr>
+        <form action="index.php?modul=transaksi&fitur=add" method="POST" class="bg-white p-6 rounded-lg shadow-md">
+            <div class="mb-4">
+                <label for="user_id" class="block text-gray-700">User Name</label>
+                <select id="user_id" name="user_id" class="mt-2 p-2 w-full border border-gray-300 rounded-lg" required>
+                    <?php foreach ($users as $user): ?>
+                        <option value="<?php echo $user->user_id; ?>">
+                            <?php echo $user->user_name; ?>
+                        </option>
                     <?php endforeach; ?>
-                <?php endif; ?>
-            </tbody>
-            </table>
-        </div>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label for="barang_id" class="block text-gray-700">Barang Name</label>
+                <select id="barang_id" name="barang_id" class="mt-2 p-2 w-full border border-gray-300 rounded-lg" required>
+                    <?php foreach ($barangs as $barang): ?>
+                        <option value="<?php echo $barang->barang_id; ?>">
+                            <?php echo $barang->barang_name; ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label for="quantity" class="block text-gray-700">Quantity</label>
+                <input type="number" id="quantity" name="quantity" class="mt-2 p-2 w-full border border-gray-300 rounded-lg" required min="1">
+            </div>
+
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg">Add Transaction</button>
+        </form>
     </main>
 </body>
 </html>

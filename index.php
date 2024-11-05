@@ -3,6 +3,7 @@ session_start();
 require_once 'models/model_role.php';
 require_once 'models/model_user.php';
 require_once 'models/model_barang.php';
+require_once 'models/model_transaksi.php';
 
 if (isset($_GET['modul'])) {
     $modul = $_GET['modul'];
@@ -250,5 +251,51 @@ switch ($modul) {
                 include 'views/barang_list.php';
                 break;
         }
+        break;
+
+    case 'transaksi':
+        $fitur = isset($_GET['fitur']) ? $_GET['fitur'] : 'list';
+        $userModel = new modelUser(new modelRole());
+        $barangModel = new modelBarang();
+        
+        $obj_transaksi = new modelTransaksi($userModel, $barangModel);
+
+        switch ($fitur) {
+            case 'add':
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    $user_id = $_POST['user_id'];
+                    $barang_id = $_POST['barang_id'];
+                    $quantity = $_POST['quantity'];
+                    $totalAmount = $_POST['total_amount'];
+                    $transaksi_status = $_POST['transaksi_status'];
+                    $obj_transaksi->addTransaction($user_id, $barang_id, $quantity, $totalAmount, $transaksi_status);
+                    header('Location: index.php?modul=transaksi&fitur=list');
+                    exit();
+                }
+                include 'views/transaksi_add.php';
+                break;
+    
+            case 'list':
+                $transactions = $obj_transaksi->getAllTransaction();
+                include 'views/transaksi_list.php';
+                break;
+    
+            case 'update':
+                // Logic for updating a transaction
+                break;
+    
+            case 'delete':
+                // Logic for deleting a transaction
+                break;
+    
+            default:
+                header('Location: index.php?modul=transaksi&fitur=list');
+                break;
+        }
+        break;
+    
+        default:
+            header('Location: index.php?modul=dashboard');
+            break;
 }
 ?>

@@ -71,5 +71,14 @@ class modelBarang {
         }
         return false;
     }
+
+    public function getBarangNameById($barang_id) {
+        foreach ($this->barangs as $barang) {
+            if ($barang->barang_id == $barang_id) {
+                return $barang->barang_name;
+            }
+        }
+        return null;
+    }
 }
 ?>
