@@ -15,7 +15,7 @@ if (session_status() === PHP_SESSION_NONE) {
 <body class="bg-gray-100 flex">
     <aside class="w-64 bg-gradient-to-b from-blue-700 to-indigo-800 text-white min-h-screen flex flex-col shadow-lg">
         <div class="p-6 text-center">
-            <h2 class="text-3xl font-bold mb-4">ITATS Management System</h2>
+            <h2 class="text-3xl font-bold mb-4">Warehouse Management System</h2>
         </div>
         <nav class="flex-grow px-4">
             <a href="index.php?modul=dashboard" class="flex items-center gap-2 py-3 px-4 rounded-lg hover:bg-indigo-700 transition-colors">
@@ -49,19 +49,19 @@ if (session_status() === PHP_SESSION_NONE) {
                 <span>Transaction</span>
             </a>
         </nav>
-        <footer class="p-4 text-center mt-auto">
-            <button class="bg-red-500 text-white px-4 py-2 rounded-full transform transition hover:scale-105 hover:shadow-lg">Logout</button>
-        </footer>
     </aside>
 
     <main class="flex-grow p-6">
-        <header class="mb-6">
-            <h1 class="text-3xl font-semibold text-gray-700">Manage Role</h1>
-            <div class="relative mt-4">
-                <input type="text" id="search" placeholder="Search roles..." class="bg-gray-200 text-gray-700 pl-10 pr-4 py-2 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-600 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3 top-2.5 h-5 w-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M12.9 14.32a7 7 0 111.41-1.41l3.4 3.39a1 1 0 01-1.42 1.42l-3.4-3.4zm-5.9-6.32a5 5 0 100 10 5 5 0 000-10z" clip-rule="evenodd" />
-                </svg>
+        <header class="mb-6 flex justify-between items-center">
+            <h1 class="text-3xl font-semibold text-gray-700">Dashboard</h1>
+            <div class="flex items-center space-x-4">
+                <button class="flex items-center bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-700 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 2a5 5 0 100 10 5 5 0 000-10zm0 12c-3.25 0-5 2.25-5 5h10c0-2.75-1.75-5-5-5z" clip-rule="evenodd"/>
+                    </svg>
+                    John Doe
+                </button>
+                <button class="bg-red-500 text-white px-4 py-2 rounded-full transform transition hover:scale-105 hover:shadow-lg">Logout</button>
             </div>
         </header>
         <?php if (isset($_SESSION['message'])): ?>

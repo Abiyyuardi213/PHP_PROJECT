@@ -7,6 +7,7 @@ class modelTransaksi {
     private $transactions = [];
     private $userModel;
     private  $barangModel;
+    
 
     public function __construct($userModel, $barangModel) {
         $this->userModel = $userModel;
@@ -44,34 +45,51 @@ class modelTransaksi {
         try {
             $newTransactionId = $this->getLastTransactionId() + 1;
             $user_name = $this->userModel->getUserNameById($user_id);
-
+    
             if ($user_name === null) {
                 $_SESSION['message'] = "User not found";
                 return;
             }
-
+    
+            // Create the transaction object
             $transaction = new Transaksi($newTransactionId, $user_id, $transaksi_status, $this->userModel);
-
+    
+            $totalAmount = 0; // Initialize total amount
+    
+            // Loop through the items to calculate the total amount
             foreach ($items as $item) {
                 $barang_id = $item['barang_id'];
                 $quantity = $item['quantity'];
-                $barang_harga = $item['barang_harga'];
-
-                $barang_name = $this->barangModel->getBarangNameById($barang_id);
-
-                if ($barang_name === null) {
-                    $_SESSION['message'] = "Barang dengan ID $barang_id tidak ditemukan";
+                $barang_harga = $this->barangModel->getBarangHargaById($barang_id); // Get price from modelBarang
+    
+                if ($barang_harga === null) {
+                    $_SESSION['message'] = "Barang with ID $barang_id not found";
                     return;
                 }
-
+    
+                $barang_name = $this->barangModel->getBarangNameById($barang_id); // Get name from modelBarang
+                if ($barang_name === null) {
+                    $_SESSION['message'] = "Barang with ID $barang_id not found";
+                    return;
+                }
+    
+                // Calculate the total amount
+                $totalAmount += $barang_harga * $quantity;
+    
+                // Add the item to the transaction
                 $transaction->addItem($barang_id, $quantity, $barang_harga, $barang_name);
             }
-
+    
+            // After calculating the total amount, save the transaction
+            $transaction->setTotalAmount($totalAmount); // Assuming you have a method in Transaksi to set the total amount
             $this->transactions[] = $transaction;
+    
+            // Save to session
             $this->saveToSession();
+    
             $_SESSION['message'] = "Transaction added successfully";
         } catch (\Throwable $th) {
-            $_SESSION['message'] = "Transaction addition failed";
+            $_SESSION['message'] = "Transaction addition failed: " . $th->getMessage();
         }
     }
 
@@ -96,7 +114,7 @@ class modelTransaksi {
         foreach ($this->transactions as $transaction) {
             if ($transaction->transaksi_id == $transaksi_id) {
                 $transaction->items = [];
-                $transaction->totalAmount = 0;
+                $transaction->totalAmount;
 
                 foreach ($items as $item) {
                     $barang_id = $item['barang_id'];
@@ -119,17 +137,4 @@ class modelTransaksi {
         }
         $_SESSION['message'] = "Transaction not found";
     }
-
-    // public function deleteTransaction($transaksi_id) {
-    //     foreach ($this->transactions as $key => $transaction) {
-    //         if ($transaction->transaksi_id == $transaksi_id) {
-    //             unset($this->transactions[$key]);
-    //             $this->transactions = array_values($this->transactions);
-    //             $this->saveToSession();
-    //             $_SESSION['message'] = "Transaction deleted successfully";
-    //             return;
-    //         }
-    //     }
-    //     $_SESSION['message'] = "Transaction not found";
-    // }
 }

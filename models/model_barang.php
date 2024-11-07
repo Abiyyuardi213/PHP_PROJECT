@@ -81,5 +81,14 @@ class modelBarang {
         }
         return null;
     }
+
+    public function getBarangHargaById($barang_id) {
+        foreach ($this->barangs as $barang) {
+            if ($barang->barang_id == $barang_id) {
+                return $barang->barang_harga; // Return the price of the item
+            }
+        }
+        return null; // Return null if item not found
+    }
 }
 ?>

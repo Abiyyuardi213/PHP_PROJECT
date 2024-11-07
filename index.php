@@ -273,7 +273,7 @@ switch ($modul) {
 
                     foreach ($barang_ids as $index => $barang_id) {
                         $quantity = $quantities[$index];
-                        $obj_transaksi->addTransaction($user_id, $barang_id, $quantity, $totalAmount, $transaksi_status);
+                        $obj_transaksi->addTransaction($user_id, $barang_id, $quantity);
                     }
                     header('Location: index.php?modul=transaksi&fitur=list');
                     exit();

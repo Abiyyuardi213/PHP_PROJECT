@@ -9,7 +9,7 @@ class Transaksi {
     public $items = [];
     public $transaksi_status;
     public $transaksi_date;
-    public $totalAmount = 0;
+    private $totalAmount;
 
     public function __construct($transaksi_id, $user_id, $transaksi_status, $userModel) {
         $this->transaksi_id = $transaksi_id;
@@ -29,6 +29,14 @@ class Transaksi {
             'total' => $itemTotal
         ];
         $this->totalAmount += $itemTotal;
+    }
+
+    public function setTotalAmount($amount) {
+        $this->totalAmount = $amount;
+    }
+
+    public function getTotalAmount() {
+        return $this->totalAmount;
     }
 }
 ?>

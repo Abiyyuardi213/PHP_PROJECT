@@ -1,4 +1,16 @@
 <?php
+require_once 'models/model_transaksi.php';
+require_once 'models/model_user.php';
+require_once 'models/model_barang.php';
+require_once 'models/model_role.php';  // Pastikan model_role.php di-include
+
+// Buat objek modelRole sebelum modelUser
+$roleModel = new modelRole();
+$userModel = new modelUser($roleModel);  // Berikan objek roleModel pada konstruktor modelUser
+
+$barangModel = new modelBarang();
+$obj_transaksi = new modelTransaksi($userModel, $barangModel);
+
 $transactions = $obj_transaksi->getAllTransaction();
 ?>
 
@@ -9,7 +21,6 @@ $transactions = $obj_transaksi->getAllTransaction();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transaction Management System</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="https://unpkg.com/@heroicons/react@1.0.6/solid" defer></script>
 </head>
 <body class="bg-gray-100 flex">
     <aside class="w-64 bg-gradient-to-b from-blue-700 to-indigo-800 text-white min-h-screen flex flex-col shadow-lg">
@@ -75,26 +86,22 @@ $transactions = $obj_transaksi->getAllTransaction();
             <thead>
                 <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                     <th class="py-3 px-6 text-left">Transaction ID</th>
-                    <th class="py-3 px-6 text-left">User ID</th>
-                    <th class="py-3 px-6 text-left">Barang ID</th>
-                    <th class="py-3 px-6 text-left">Quantity</th>
+                    <th class="py-3 px-6 text-left">User</th>
                     <th class="py-3 px-6 text-left">Total Amount</th>
                     <th class="py-3 px-6 text-left">Status</th>
                     <th class="py-3 px-6 text-left">Date</th>
                     <th class="py-3 px-6 text-left">Actions</th>
                 </tr>
             </thead>
-            <tbody class="text-gray-600 text-sm font-light">
+            <tbody>
                 <?php foreach ($transactions as $transaction): ?>
-                    <tr class='border-b border-gray-300 hover:bg-gray-100'>
-                        <td class='py-3 px-6 text-left'><?= $transaction->transaksi_id ?></td>
-                        <td class='py-3 px-6 text-left'><?= $transaction->user_id ?></td>
-                        <td class='py-3 px-6 text-left'><?= $transaction->barang_id ?></td>
-                        <td class='py-3 px-6 text-left'><?= $transaction->quantity ?></td>
-                        <td class='py-3 px-6 text-left'><?= $transaction->total_amount ?></td>
-                        <td class='py-3 px-6 text-left'><?= $transaction->transaksi_status ?></td>
-                        <td class='py-3 px-6 text-left'><?= $transaction->created_at ?></td>
-                        <td class='py-3 px-6 text-left'>
+                    <tr class="border-t">
+                        <td class="py-3 px-6 text-left"><?= $transaction->transaksi_id ?></td>
+                        <td class="py-3 px-6 text-left"><?= htmlspecialchars($transaction->user_name) ?></td>
+                        <td class="py-3 px-6 text-left"><?= number_format($transaction->totalAmount, 2) ?></td>
+                        <td class="py-3 px-6 text-left"><?= $transaction->transaksi_status ?></td>
+                        <td class="py-3 px-6 text-left"><?= $transaction->transaksi_date ?></td>
+                        <td class="py-3 px-6 text-left">
                             <a href="index.php?modul=transaksi&fitur=edit&id=<?= $transaction->transaksi_id ?>" class="text-blue-500 hover:text-blue-700">Edit</a>
                             <a href="index.php?modul=transaksi&fitur=delete&id=<?= $transaction->transaksi_id ?>" class="text-red-500 hover:text-red-700 ml-4">Delete</a>
                         </td>
