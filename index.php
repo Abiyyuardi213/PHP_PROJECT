@@ -182,9 +182,10 @@ switch ($modul) {
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $barang_name = $_POST['barang_name'];
                     $barang_stock = $_POST['barang_stock'];
+                    $barang_harga = $_POST['barang_harga'];
                     $barang_supplier = $_POST['barang_supplier'];
                     $barang_status = $_POST['barang_status'];
-                    $obj_barang->addBarang($barang_name, $barang_stock, $barang_supplier, $barang_status);
+                    $obj_barang->addBarang($barang_name, $barang_stock, $barang_harga, $barang_supplier, $barang_status);
 
                     $_SESSION['message'] = 'Inventory added successfully';
 
@@ -215,10 +216,11 @@ switch ($modul) {
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $barang_name = $_POST['barang_name'];
                         $barang_stock = $_POST['barang_stock'];
+                        $barang_harga = $_POST['barang_harga'];
                         $barang_supplier = $_POST['barang_supplier'];
                         $barang_status = $_POST['barang_status'];
 
-                        $obj_barang->updateBarang($barang_id, $barang_name, $barang_stock, $barang_supplier, $barang_status);
+                        $obj_barang->updateBarang($barang_id, $barang_name, $barang_stock, $barang_harga, $barang_supplier, $barang_status);
                         echo "tes";
                         $_SESSION['message'] = 'Inventory updated successfully';
                         echo $_SESSION;
@@ -257,18 +259,22 @@ switch ($modul) {
         $fitur = isset($_GET['fitur']) ? $_GET['fitur'] : 'list';
         $userModel = new modelUser(new modelRole());
         $barangModel = new modelBarang();
-        
         $obj_transaksi = new modelTransaksi($userModel, $barangModel);
 
         switch ($fitur) {
             case 'add':
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $user_id = $_POST['user_id'];
-                    $barang_id = $_POST['barang_id'];
-                    $quantity = $_POST['quantity'];
+                    $barang_ids = $_POST['barang_id'];
+                    $quantities = $_POST['quantity'];
                     $totalAmount = $_POST['total_amount'];
                     $transaksi_status = $_POST['transaksi_status'];
-                    $obj_transaksi->addTransaction($user_id, $barang_id, $quantity, $totalAmount, $transaksi_status);
+                    // $obj_transaksi->addTransaction($user_id, $barang_id, $quantity, $totalAmount, $transaksi_status);
+
+                    foreach ($barang_ids as $index => $barang_id) {
+                        $quantity = $quantities[$index];
+                        $obj_transaksi->addTransaction($user_id, $barang_id, $quantity, $totalAmount, $transaksi_status);
+                    }
                     header('Location: index.php?modul=transaksi&fitur=list');
                     exit();
                 }

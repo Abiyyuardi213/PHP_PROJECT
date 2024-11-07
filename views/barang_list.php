@@ -80,6 +80,7 @@ $barangs = $obj_barang->getAllBarangs();
                     <th class="py-3 px-6 text-left">Item ID</th>
                     <th class="py-3 px-6 text-left">Item Name</th>
                     <th class="py-3 px-6 text-left">Stock</th>
+                    <th class="py-3 px-6 text-left">Price</th>
                     <th class="py-3 px-6 text-left">Supplier</th>
                     <th class="py-3 px-6 text-left">Status</th>
                     <th class="py-3 px-6 text-left">Create At</th>
@@ -97,6 +98,7 @@ $barangs = $obj_barang->getAllBarangs();
                         <td class="py-3 px-6 text-left"><?= htmlspecialchars($barang->barang_id) ?></td>
                         <td class="py-3 px-6 text-left"><?= htmlspecialchars($barang->barang_name) ?></td>
                         <td class="py-3 px-6 text-left"><?= htmlspecialchars($barang->barang_stock) ?></td>
+                        <td class="py-3 px-6 text-left"><?= htmlspecialchars($barang->barang_harga) ?></td>
                         <td class="py-3 px-6 text-left"><?= htmlspecialchars($barang->barang_supplier) ?></td>
                         <td class="py-3 px-6 text-left"><?= $barang->barang_status == 1 ? 'Available' : 'Out of Stock' ?></td>
                         <td class="py-3 px-6 text-left"><?= htmlspecialchars($barang->create_at) ?></td>

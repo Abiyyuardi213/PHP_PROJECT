@@ -4,25 +4,31 @@ require_once 'models/model_barang.php';
 
 class Transaksi {
     public $transaksi_id;
-    public $user_name;
     public $user_id;
-    public $barang_name;
-    public $barang_id;
-    public $quantity;
-    public $totalAmount;
+    public $user_name;
+    public $items = [];
     public $transaksi_status;
     public $transaksi_date;
+    public $totalAmount = 0;
 
-    public function __construct($transaksi_id, $user_id, $barang_id, $quantity, $totalAmount, $transaksi_status, $userModel, $barangModel) {
+    public function __construct($transaksi_id, $user_id, $transaksi_status, $userModel) {
         $this->transaksi_id = $transaksi_id;
         $this->user_id = $user_id;
-        $this->barang_id = $barang_id;
-        $this->quantity = $quantity;
-        $this->totalAmount = $totalAmount;
         $this->transaksi_status = $transaksi_status;
         $this->transaksi_date = date("Y-m-d H:i:s");
         $this->user_name = $userModel->getUserNameById($user_id);
-        $this->barang_name = $barangModel->getBarangNameById($barang_id);
+    }
+
+    public function addItem($barang_id, $quantity, $barang_harga, $barang_name) {
+        $itemTotal = $quantity * $barang_harga;
+        $this->items[] = [
+            'barang_id' => $barang_id,
+            'barang_name' => $barang_name,
+            'quantity' => $quantity,
+            'barang_harga' => $barang_harga,
+            'total' => $itemTotal
+        ];
+        $this->totalAmount += $itemTotal;
     }
 }
 ?>

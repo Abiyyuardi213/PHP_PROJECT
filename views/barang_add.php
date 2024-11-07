@@ -61,6 +61,10 @@
                 <input type="number" id="barang_stock" name="barang_stock" class="mt-2 p-2 w-full border border-gray-300 rounded-lg" required>
             </div>
             <div class="mb-4">
+                <label for="barang_harga" class="block text-gray-700">Item Price</label>
+                <input type="number" id="barang_harga" name="barang_harga" class="mt-2 p-2 w-full border border-gray-300 rounded-lg" required>
+            </div>
+            <div class="mb-4">
                 <label for="barang_supplier" class="block text-gray-700">Inventory Supplier</label>
                 <input type="text" id="barang_supplier" name="barang_supplier" class="mt-2 p-2 w-full border border-gray-300 rounded-lg" required>
             </div>

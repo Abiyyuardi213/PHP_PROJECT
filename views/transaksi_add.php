@@ -11,8 +11,6 @@ $transaksiModel = new modelTransaksi($userModel, $barangModel);
 
 $users = $userModel->getAllUsers();
 $barangs = $barangModel->getAllBarangs();
-
-$transactions = $transaksiModel->getAllTransaction()
 ?>
 
 <!DOCTYPE html>
@@ -22,6 +20,7 @@ $transactions = $transaksiModel->getAllTransaction()
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add New Transaction</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.0/dist/alpine.min.js"></script>
 </head>
 <body class="bg-gray-100 flex">
     <aside class="w-64 bg-gradient-to-b from-blue-700 to-indigo-800 text-white min-h-screen flex flex-col shadow-lg">
@@ -60,44 +59,96 @@ $transactions = $transaksiModel->getAllTransaction()
                 <span>Transaction</span>
             </a>
         </nav>
+        <footer class="p-4 text-center mt-auto">
+            <button class="bg-red-500 text-white px-4 py-2 rounded-full transform transition hover:scale-105 hover:shadow-lg">Logout</button>
+        </footer>
     </aside>
 
-    <main class="flex-grow p-6">
-        <header class="mb-6 flex justify-between items-center">
+    <main class="flex-grow p-8">
+        <header class="mb-6 text-center">
             <h1 class="text-3xl font-semibold text-gray-700">Add New Transaction</h1>
-            <a href="index.php?modul=transaksi&fitur=list" class="bg-gray-500 text-white px-4 py-2 rounded-lg">Back to Transaction List</a>
+            <p class="text-gray-500">Manage your transactions efficiently</p>
         </header>
 
-        <form action="index.php?modul=transaksi&fitur=add" method="POST" class="bg-white p-6 rounded-lg shadow-md">
-            <div class="mb-4">
-                <label for="user_id" class="block text-gray-700">User Name</label>
-                <select id="user_id" name="user_id" class="mt-2 p-2 w-full border border-gray-300 rounded-lg" required>
-                    <?php foreach ($users as $user): ?>
-                        <option value="<?php echo $user->user_id; ?>">
-                            <?php echo $user->user_name; ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white p-8 rounded-lg shadow-md w-full max-w-4xl mx-auto" x-data="transactionForm()">
+            <!-- Left Container: Form Inputs -->
+            <div class="space-y-6">
+                <div>
+                    <label for="user_id" class="block text-gray-700">User Name</label>
+                    <select id="user_id" name="user_id" class="mt-2 p-2 w-full border border-gray-300 rounded-lg" required>
+                        <?php foreach ($users as $user): ?>
+                            <option value="<?php echo $user->user_id; ?>">
+                                <?php echo $user->user_name; ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="barang_id" class="block text-gray-700">Barang Name</label>
+                    <select id="barang_id" name="barang_id" class="mt-2 p-2 w-full border border-gray-300 rounded-lg" x-on:change="updateBarang($event)" required>
+                        <option value="" disabled selected>Select a product</option>
+                        <?php foreach ($barangs as $barang): ?>
+                            <option value="<?php echo $barang->barang_id; ?>" data-price="<?php echo $barang->barang_harga; ?>">
+                                <?php echo $barang->barang_name; ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="quantity" class="block text-gray-700">Quantity</label>
+                    <input type="number" id="quantity" name="quantity" class="mt-2 p-2 w-full border border-gray-300 rounded-lg" x-model="quantity" x-on:input="updateTotal" min="1" required>
+                </div>
             </div>
 
-            <div class="mb-4">
-                <label for="barang_id" class="block text-gray-700">Barang Name</label>
-                <select id="barang_id" name="barang_id" class="mt-2 p-2 w-full border border-gray-300 rounded-lg" required>
-                    <?php foreach ($barangs as $barang): ?>
-                        <option value="<?php echo $barang->barang_id; ?>">
-                            <?php echo $barang->barang_name; ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
+            <!-- Right Container: Price and Total Display -->
+            <div class="flex flex-col justify-center items-center bg-gray-50 p-6 rounded-lg">
+                <h2 class="text-xl font-semibold text-gray-600 mb-4">Transaction Summary</h2>
+                
+                <div class="text-center">
+                    <p class="text-gray-500 text-lg">Selected Barang:</p>
+                    <p class="text-2xl font-bold text-gray-800 mt-1" x-text="barangName || 'None Selected'">None Selected</p>
+                </div>
+                <div class="text-center mt-6">
+                    <p class="text-gray-500 text-lg">Price per Unit:</p>
+                    <p class="text-2xl font-bold text-gray-800">Rp <span x-text="barangPrice">0</span></p>
+                </div>
+                <!-- <div>
+                    <label class="block text-gray-700">Price</label>
+                    <p class="mt-2 p-2 bg-gray-200 rounded-lg">$<span x-text="price">0</span></p>
+                </div> -->
 
-            <div class="mb-4">
-                <label for="quantity" class="block text-gray-700">Quantity</label>
-                <input type="number" id="quantity" name="quantity" class="mt-2 p-2 w-full border border-gray-300 rounded-lg" required min="1">
-            </div>
+                <!-- <div>
+                    <label class="block text-gray-700">Total</label>
+                    <p class="mt-2 p-2 bg-gray-200 rounded-lg">$<span x-text="total">0</span></p>
+                </div> -->
 
-            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg">Add Transaction</button>
-        </form>
+                <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg">Save Transaction</button>
+            </div>
+        </div>
     </main>
+
+    <script>
+        function transactionForm() {
+            return {
+                barangName: '',
+                barangPrice: 0,
+                quantity: 1,
+                totalPrice: 0,
+
+                updateBarang(event) {
+                    const selectedOption = event.target.options[event.target.selectedIndex];
+                    this.barangName = selectedOption.text;
+                    this.barangPrice = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+                    this.updateTotal();
+                },
+
+                updateTotal() {
+                    this.totalPrice = this.barangPrice * this.quantity;
+                }
+            }
+        }
+    </script>
 </body>
 </html>
