@@ -94,8 +94,6 @@ $transactions = $obj_transaksi->getAllTransaction();
                 </tr>
             </thead>
             <tbody>
-            
-                <?php  echo '<pre>'; var_dump($transactions);  echo '</pre>';?>
                 <?php if (!empty($transactions)) {
                     foreach ($transactions as $transaction) { 
                         $totalHargaKeseluruhan = 0;
