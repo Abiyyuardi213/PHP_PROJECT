@@ -51,9 +51,6 @@ $barangs = $obj_barang->getAllBarangs();
                 <span>Transaction</span>
             </a>
         </nav>
-        <footer class="p-4 text-center mt-auto">
-            <button class="bg-red-500 text-white px-4 py-2 rounded-full transform transition hover:scale-105 hover:shadow-lg">Logout</button>
-        </footer>
     </aside>
     
     <main class="flex-grow p-6">

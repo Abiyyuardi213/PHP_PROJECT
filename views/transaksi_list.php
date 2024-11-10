@@ -2,16 +2,16 @@
 require_once 'models/model_transaksi.php';
 require_once 'models/model_user.php';
 require_once 'models/model_barang.php';
-require_once 'models/model_role.php';  // Pastikan model_role.php di-include
+require_once 'models/model_role.php';
 
-// Buat objek modelRole sebelum modelUser
 $roleModel = new modelRole();
-$userModel = new modelUser($roleModel);  // Berikan objek roleModel pada konstruktor modelUser
-
+$userModel = new modelUser();
 $barangModel = new modelBarang();
-$obj_transaksi = new modelTransaksi($userModel, $barangModel);
+$obj_transaksi = new modelTransaction();
 
 $transactions = $obj_transaksi->getAllTransaction();
+
+
 ?>
 
 <!DOCTYPE html>
@@ -23,11 +23,13 @@ $transactions = $obj_transaksi->getAllTransaction();
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 flex">
+    <!-- Sidebar -->
     <aside class="w-64 bg-gradient-to-b from-blue-700 to-indigo-800 text-white min-h-screen flex flex-col shadow-lg">
         <div class="p-6 text-center">
-            <h2 class="text-3xl font-bold mb-4">ITATS Management System</h2>
+            <h2 class="text-3xl font-bold mb-4">Warehouse Management System</h2>
         </div>
         <nav class="flex-grow px-4">
+            <!-- Links in Sidebar -->
             <a href="index.php?modul=dashboard" class="flex items-center gap-2 py-3 px-4 rounded-lg hover:bg-indigo-700 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11a1 1 0 11-2 0V9a1 1 0 112 0v4zm-1-7a1 1 0 100 2 1 1 0 000-2z"/>
@@ -59,14 +61,12 @@ $transactions = $obj_transaksi->getAllTransaction();
                 <span>Transaction</span>
             </a>
         </nav>
-        <footer class="p-4 text-center mt-auto">
-            <button class="bg-red-500 text-white px-4 py-2 rounded-full transform transition hover:scale-105 hover:shadow-lg">Logout</button>
-        </footer>
     </aside>
 
+    <!-- Main content -->
     <main class="flex-grow p-6">
-        <header class="mb-6">
-            <h1 class="text-3xl font-semibold text-gray-700">Transaction List</h1>
+        <header class="mb-6 flex justify-between items-center">
+            <h1 class="text-3xl font-semibold text-gray-700">Dashboard</h1>
         </header>
 
         <?php if (isset($_SESSION['message'])): ?>
@@ -87,6 +87,7 @@ $transactions = $obj_transaksi->getAllTransaction();
                 <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                     <th class="py-3 px-6 text-left">Transaction ID</th>
                     <th class="py-3 px-6 text-left">User</th>
+                    <th class="py-3 px-6 text-left">Product</th>
                     <th class="py-3 px-6 text-left">Total Amount</th>
                     <th class="py-3 px-6 text-left">Status</th>
                     <th class="py-3 px-6 text-left">Date</th>
@@ -97,13 +98,13 @@ $transactions = $obj_transaksi->getAllTransaction();
                 <?php foreach ($transactions as $transaction): ?>
                     <tr class="border-t">
                         <td class="py-3 px-6 text-left"><?= $transaction->transaksi_id ?></td>
-                        <td class="py-3 px-6 text-left"><?= htmlspecialchars($transaction->user_name) ?></td>
-                        <td class="py-3 px-6 text-left"><?= number_format($transaction->totalAmount, 2) ?></td>
+                        <td class="py-3 px-6 text-left"><?= htmlspecialchars($transaction->user_name ?? 'Unknown User') ?></td>
+                        <td class="py-3 px-6 text-left"><?= htmlspecialchars($transaction->barang_name ?? 'Unknown Product') ?></td>
+                        <td class="py-3 px-6 text-left"><?= number_format($transaction->total_amount ?? 0, 2) ?></td>
                         <td class="py-3 px-6 text-left"><?= $transaction->transaksi_status ?></td>
                         <td class="py-3 px-6 text-left"><?= $transaction->transaksi_date ?></td>
                         <td class="py-3 px-6 text-left">
-                            <a href="index.php?modul=transaksi&fitur=edit&id=<?= $transaction->transaksi_id ?>" class="text-blue-500 hover:text-blue-700">Edit</a>
-                            <a href="index.php?modul=transaksi&fitur=delete&id=<?= $transaction->transaksi_id ?>" class="text-red-500 hover:text-red-700 ml-4">Delete</a>
+                            <a href="index.php?modul=transaksi&fitur=view&transaksi_id=123">Lihat Detail</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

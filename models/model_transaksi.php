@@ -1,140 +1,86 @@
 <?php
-require_once 'nodes/node_transaksi.php';
-require_once 'models/model_user.php';
-require_once 'models/model_barang.php';
+require_once('nodes/node_transaksi.php');
+require_once('models/model_detailTransaksi.php');
 
-class modelTransaksi {
-    private $transactions = [];
+class modelTransaction {
+    private $transactionList = [];
+    private $nextId = 1;
+    private $transactionDetailModel;
+    private $barangModel;
     private $userModel;
-    private  $barangModel;
-    
 
-    public function __construct($userModel, $barangModel) {
-        $this->userModel = $userModel;
-        $this->barangModel = $barangModel;
-        
-        if (isset($_SESSION['transactions'])) {
-            if ($_SESSION['transactions'] == null) {
-                $this->transactions = unserialize($_SESSION['transactions']);
-            }
+    public function __construct() {
+        $this->transactionDetailModel = new modelDetailTransaction();
+        $this->barangModel = new modelBarang();
+        $this->userModel = new modelUser();
+    
+        // Memastikan bahwa data transaksi dalam session adalah array atau objek
+        if (isset($_SESSION['transaksi'])) {
+            $this->transactionList = unserialize($_SESSION['transaksi']);
+            $this->nextId = count($this->transactionList) + 1;
         } else {
-            $this->initializeDefaultTransaction();
+            $this->transactionList = [];
+            $this->nextId = 1;
         }
     }
 
-    private function getLastTransactionId() {
-        $maxIdTransaction = 0;
-        foreach ($this->transactions as $transaction) {
-            if ($transaction->transaksi_id > $maxIdTransaction) {
-                $maxIdTransaction = $transaction->transaksi_id;
+    public function addTransaksi($user_id, $transaction_date, $transaction_status, $detailBarang) {
+        $user = $this->userModel->getUserById($user_id);
+        if ($user === null) {
+            return false;
+        }
+
+        // Membuat objek Transaksi baru dengan ID unik
+        $transaksi = new Transaksi($this->nextId++, $user->user_id, $transaction_date, $transaction_status);
+
+        // Menambahkan detail barang ke transaksi
+        foreach ($detailBarang as $detail) {
+            $barang = $this->barangModel->getBarangById($detail['Id_Barang']); 
+            if ($barang) {
+                // Membuat objek DetailTransaksi dan menambahkannya ke transaksi
+                $detailObj = new DetailTransaksi(
+                    $transaksi->transaksi_id,
+                    $this->transactionDetailModel->getNextId(), // Gunakan ID detail yang benar
+                    $detail['Id_Barang'],
+                    $detail['Jumlah_Barang'],
+                    $detail['Harga_Barang'],
+                    $user_id
+                );
+                $transaksi->addDetailBarang($detailObj);
+
+                // Menambahkan detail ke model detail transaksi
+                $this->transactionDetailModel->addTransactionDetail($transaksi->transaksi_id, $detail['Id_Barang'], $detail['Jumlah_Barang'], $detail['Harga_Barang'], $user_id);
             }
         }
-        return $maxIdTransaction;
-    }
 
-    public function initializeDefaultTransaction() {
-        if (empty($this->transactions)) {
-            $this->addTransaction(1, [
-                ['barang_id' => 1, 'quantity' => 10, 'price' => 4300]
-            ], 1);
-            $this->saveToSession();
-        }
-    }
-
-    public function addTransaction($user_id, $items, $transaksi_status) {
-        try {
-            $newTransactionId = $this->getLastTransactionId() + 1;
-            $user_name = $this->userModel->getUserNameById($user_id);
-    
-            if ($user_name === null) {
-                $_SESSION['message'] = "User not found";
-                return;
-            }
-    
-            // Create the transaction object
-            $transaction = new Transaksi($newTransactionId, $user_id, $transaksi_status, $this->userModel);
-    
-            $totalAmount = 0; // Initialize total amount
-    
-            // Loop through the items to calculate the total amount
-            foreach ($items as $item) {
-                $barang_id = $item['barang_id'];
-                $quantity = $item['quantity'];
-                $barang_harga = $this->barangModel->getBarangHargaById($barang_id); // Get price from modelBarang
-    
-                if ($barang_harga === null) {
-                    $_SESSION['message'] = "Barang with ID $barang_id not found";
-                    return;
-                }
-    
-                $barang_name = $this->barangModel->getBarangNameById($barang_id); // Get name from modelBarang
-                if ($barang_name === null) {
-                    $_SESSION['message'] = "Barang with ID $barang_id not found";
-                    return;
-                }
-    
-                // Calculate the total amount
-                $totalAmount += $barang_harga * $quantity;
-    
-                // Add the item to the transaction
-                $transaction->addItem($barang_id, $quantity, $barang_harga, $barang_name);
-            }
-    
-            // After calculating the total amount, save the transaction
-            $transaction->setTotalAmount($totalAmount); // Assuming you have a method in Transaksi to set the total amount
-            $this->transactions[] = $transaction;
-    
-            // Save to session
-            $this->saveToSession();
-    
-            $_SESSION['message'] = "Transaction added successfully";
-        } catch (\Throwable $th) {
-            $_SESSION['message'] = "Transaction addition failed: " . $th->getMessage();
-        }
-    }
-
-    public function saveToSession() {
-        $_SESSION['transactions'] = serialize($this->transactions);
-    }
-
-    public function getAllTransaction() {
-        return $this->transactions;
+        $this->transactionList[] = $transaksi;
+        $this->saveToSession();
+        return true;
     }
 
     public function getTransactionById($transaksi_id) {
-        foreach ($this->transactions as $transaction) {
-            if ($transaction->transaksi_id == $transaksi_id) {
-                return $transaction;
+        // Memastikan session transaksi sudah di-unserialize dengan benar
+        if (isset($_SESSION['transaksi'])) {
+            $transactions = unserialize($_SESSION['transaksi']);
+        } else {
+            $transactions = [];
+        }
+    
+        // Memeriksa transaksi dalam array
+        foreach ($transactions as $transaksi) {
+            if ($transaksi->transaksi_id == $transaksi_id) {
+                return $transaksi;
             }
         }
-        return null;
+        return null; // Jika transaksi tidak ditemukan
     }
 
-    public function updateTransaction($transaksi_id, $items, $transaksi_status) {
-        foreach ($this->transactions as $transaction) {
-            if ($transaction->transaksi_id == $transaksi_id) {
-                $transaction->items = [];
-                $transaction->totalAmount;
-
-                foreach ($items as $item) {
-                    $barang_id = $item['barang_id'];
-                    $quantity = $item['quantity'];
-                    $barang_harga = $item['barang_harga'];
-                    $barang_name = $this->barangModel->getBarangNameById($barang_id);
-
-                    if ($barang_name === null) {
-                        $_SESSION['message'] = "Barang dengan ID $barang_id tidak ditemukan";
-                        return;
-                    }
-
-                    $transaction->addItem($barang_id, $quantity, $barang_harga, $barang_name);
-                }
-                $transaction->transaski_status = $transaksi_status;
-                $this->saveToSession();
-                $_SESSION['message'] = "Transaction updated successfully";
-                return;
-            }
-        }
-        $_SESSION['message'] = "Transaction not found";
+    public function getAllTransaction() {
+        return $this->transactionList;
     }
+
+    private function saveToSession() {
+        $_SESSION['transaksi'] = serialize($this->transactionList);
+    }
+    
 }

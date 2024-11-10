@@ -8,8 +8,11 @@ class modelBarang {
     public function __construct() {
         if (isset($_SESSION['barangs'])) {
             $this->barangs = unserialize($_SESSION['barangs']);
+            if (!$this->barangs) {
+                $this->initializeDefaultBarang();
+            }
         } else {
-            //inisial
+            $this->initializeDefaultBarang();
         }
     }
 
@@ -25,13 +28,14 @@ class modelBarang {
 
     public function initializeDefaultBarang() {
         if (empty($this->barangs)) {
-            $this->addBarang("Keyboard", "100", "150.000", "Abiyyu", 1);
+            $this->addBarang("Keyboard", "100", "150000", "Abiyyu", 1);
+            $this->addBarang("Monitor", "50", "1400000", "Indra", 1);
         }
     }
 
     public function addBarang($barang_name, $barang_stock, $barang_harga, $barang_supplier, $barang_status) {
         $newIdBarang = $this->getLastIDBarang() + 1;
-        $create_at = date("Y-m-d H:i:s");  // Set the current timestamp
+        $create_at = date("Y-m-d H:i:s");
         $brg = new Barang($newIdBarang, $barang_name, $barang_stock, $barang_harga, $barang_supplier, $barang_status, $create_at);
         $this->barangs[] = $brg;
         $this->saveToSession();
@@ -73,22 +77,23 @@ class modelBarang {
         return false;
     }
 
-    public function getBarangNameById($barang_id) {
+    public function getBarangById($barang_id) {
         foreach ($this->barangs as $barang) {
             if ($barang->barang_id == $barang_id) {
-                return $barang->barang_name;
+                // Return the Barang object itself instead of an array
+                return $barang;
             }
         }
-        return null;
+        return null; // Return null if not found
     }
 
     public function getBarangHargaById($barang_id) {
         foreach ($this->barangs as $barang) {
             if ($barang->barang_id == $barang_id) {
-                return $barang->barang_harga; // Return the price of the item
+                return $barang->barang_harga;
             }
         }
-        return null; // Return null if item not found
+        return null;
     }
 }
 ?>

@@ -6,8 +6,8 @@ class modelUser {
     private $users = [];
     private $roleModel;
 
-    public function __construct($roleModel) {
-        $this->roleModel = $roleModel;
+    public function __construct() {
+        $this->roleModel = new modelRole();
 
         if (isset($_SESSION['users'])) {
             $this->users = unserialize($_SESSION['users']);
@@ -28,7 +28,7 @@ class modelUser {
 
     public function initializeDefaultUser() {
         if (empty($this->users)) {
-            // $this->addUser("Amelia Sofia", "Amelyas05", "pass1234", 1);
+            $this->addUser("Amelia Sofia", "Amelyas05", "pass1234", 1);
             $this->saveToSession();
         }
     }
@@ -90,10 +90,10 @@ class modelUser {
         $this->saveToSession();
     }
 
-    public function getUserNameById($user_id) {
+    public function getUserById($user_id) {
         foreach ($this->users as $user) {
             if ($user->user_id == $user_id) {
-                return $user->user_name;
+                return $user;
             }
         }
         return null;

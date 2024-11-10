@@ -24,7 +24,7 @@ class modelRole {
 
     public function initializeDefaultRole() {
         if (empty($this->roles)) {
-            $this->addRole("Mahasiswa", "Student", 450000, 1);
+            $this->addRole("Customer", "Member", 0, 1);
         }
     }
 

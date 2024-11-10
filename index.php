@@ -13,7 +13,7 @@ if (isset($_GET['modul'])) {
 
 switch ($modul) {
     case 'dashboard':
-        include 'views/kosong.php';
+        include 'views/dashboard.php';
         break;
 
     case 'role':
@@ -257,28 +257,61 @@ switch ($modul) {
 
     case 'transaksi':
         $fitur = isset($_GET['fitur']) ? $_GET['fitur'] : 'list';
-        $userModel = new modelUser(new modelRole());
+        $userModel = new modelUser();
         $barangModel = new modelBarang();
-        $obj_transaksi = new modelTransaksi($userModel, $barangModel);
-
+        $obj_transaksi = new modelTransaction();
+    
         switch ($fitur) {
             case 'add':
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    // Mengambil data dari form
                     $user_id = $_POST['user_id'];
-                    $barang_ids = $_POST['barang_id'];
-                    $quantities = $_POST['quantity'];
-                    $totalAmount = $_POST['total_amount'];
-                    $transaksi_status = $_POST['transaksi_status'];
-                    // $obj_transaksi->addTransaction($user_id, $barang_id, $quantity, $totalAmount, $transaksi_status);
-
+                    $transaction_date = date('Y-m-d H:i:s');
+                    $transaction_status = 'completed'; // Atur status transaksi (bisa disesuaikan)
+                    $barang_ids = $_POST['barang_id']; // Array ID barang
+                    $barang_quantities = $_POST['barang_quantity']; // Array kuantitas barang
+                
+                    // Array untuk detail barang dalam transaksi
+                    $detailBarang = [];
                     foreach ($barang_ids as $index => $barang_id) {
-                        $quantity = $quantities[$index];
-                        $obj_transaksi->addTransaction($user_id, $barang_id, $quantity);
+                        $quantity = $barang_quantities[$index];
+                    
+                        $barang = $barangModel->getBarangById($barang_id);
+                        if ($barang) {
+                            $barang_name = $barang->barang_name;  // Corrected
+                            $barang_harga = $barang->barang_harga;  // Corrected
+                            $detailBarang[] = [
+                                'Id_Barang' => $barang_id,
+                                'Jumlah_Barang' => $quantity,
+                                'Harga_Barang' => $barang_harga
+                            ];
+                        }
                     }
+                
+                    // Menambahkan transaksi
+                    $obj_transaksi->addTransaksi($user_id, $transaction_date, $transaction_status, $detailBarang);
+                
+                    // Menyimpan pesan sukses di session
+                    $_SESSION['message'] = "Transaksi berhasil ditambahkan!";
                     header('Location: index.php?modul=transaksi&fitur=list');
                     exit();
                 }
+                // Mengambil data pengguna dan barang untuk ditampilkan di form
+                $users = $userModel->getAllUsers();
+                $barangs = $barangModel->getAllBarangs();
                 include 'views/transaksi_add.php';
+                break;
+
+            case 'view':
+                if (isset($_GET['transaksi_id'])) {
+                    $transaksi_id = $_GET['transaksi_id'];
+                    $transaksi = $obj_transaksi->getTransactionById($transaksi_id);
+                    include 'views/transaksi_view.php';
+                } else {
+                    $_SESSION['message'] = "Transaksi tidak ditemukan.";
+                    header('Location: index.php?modul=transaksi&fitur=list');
+                    exit();
+                }
                 break;
     
             case 'list':
@@ -286,22 +319,22 @@ switch ($modul) {
                 include 'views/transaksi_list.php';
                 break;
     
-            case 'update':
-                // Logic for updating a transaction
-                break;
+        case 'update':
+            // Logic for updating a transaction
+            break;
     
-            case 'delete':
-                // Logic for deleting a transaction
-                break;
-    
-            default:
-                header('Location: index.php?modul=transaksi&fitur=list');
-                break;
-        }
-        break;
+        case 'delete':
+            // Logic for deleting a transaction
+            break;
     
         default:
-            header('Location: index.php?modul=dashboard');
-            break;
+            header('Location: index.php?modul=transaksi&fitur=list');
+            exit();
+        }
+        break;
+
+    default:
+        header('Location: index.php?modul=dashboard');
+        break;
 }
-?>
+

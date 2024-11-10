@@ -9,7 +9,7 @@
 <body class="bg-gray-100 flex">
     <aside class="w-64 bg-gradient-to-b from-blue-700 to-indigo-800 text-white min-h-screen flex flex-col shadow-lg">
         <div class="p-6 text-center">
-            <h2 class="text-3xl font-bold mb-4">ITATS Management System</h2>
+            <h2 class="text-3xl font-bold mb-4">Warehouse Management System</h2>
         </div>
         <nav class="flex-grow px-4">
             <a href="index.php?modul=dashboard" class="flex items-center gap-2 py-3 px-4 rounded-lg hover:bg-indigo-700 transition-colors">
@@ -43,14 +43,20 @@
                 <span>Transaction</span>
             </a>
         </nav>
-        <footer class="p-4 text-center mt-auto">
-            <button class="bg-red-500 text-white px-4 py-2 rounded-full">Logout</button>
-        </footer>
     </aside>
 
     <main class="flex-grow p-6">
-        <header class="mb-6">
+        <header class="mb-6 flex justify-between items-center">
             <h1 class="text-3xl font-semibold text-gray-700">Update Inventory</h1>
+            <div class="flex items-center space-x-4">
+                <button class="flex items-center bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-700 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 2a5 5 0 100 10 5 5 0 000-10zm0 12c-3.25 0-5 2.25-5 5h10c0-2.75-1.75-5-5-5z" clip-rule="evenodd"/>
+                    </svg>
+                    John Doe
+                </button>
+                <button class="bg-red-500 text-white px-4 py-2 rounded-full transform transition hover:scale-105 hover:shadow-lg">Logout</button>
+            </div>
         </header>
 
         <form method="POST" class="bg-white p-6 rounded-lg shadow-md">
