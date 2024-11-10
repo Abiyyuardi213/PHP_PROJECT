@@ -87,7 +87,6 @@ $transactions = $obj_transaksi->getAllTransaction();
                 <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                     <th class="py-3 px-6 text-left">Transaction ID</th>
                     <th class="py-3 px-6 text-left">User</th>
-                    <th class="py-3 px-6 text-left">Product</th>
                     <th class="py-3 px-6 text-left">Total Amount</th>
                     <th class="py-3 px-6 text-left">Status</th>
                     <th class="py-3 px-6 text-left">Date</th>
@@ -95,19 +94,27 @@ $transactions = $obj_transaksi->getAllTransaction();
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($transactions as $transaction): ?>
+            
+                <?php  echo '<pre>'; var_dump($transactions);  echo '</pre>';?>
+                <?php if (!empty($transactions)) {
+                    foreach ($transactions as $transaction) { 
+                        $totalHargaKeseluruhan = 0;
+                ?>
                     <tr class="border-t">
                         <td class="py-3 px-6 text-left"><?= $transaction->transaksi_id ?></td>
-                        <td class="py-3 px-6 text-left"><?= htmlspecialchars($transaction->user_name ?? 'Unknown User') ?></td>
-                        <td class="py-3 px-6 text-left"><?= htmlspecialchars($transaction->barang_name ?? 'Unknown Product') ?></td>
-                        <td class="py-3 px-6 text-left"><?= number_format($transaction->total_amount ?? 0, 2) ?></td>
+                        <td class="py-3 px-6 text-left"><?= htmlspecialchars($transaction->user_id->user_name ?? 'Unknown User') ?></td>
+                        <?php foreach ($transaction->itemsDetail as $detail) { 
+                            $totalHargaKeseluruhan += $detail->total_amount; // Menambah ke total keseluruhan
+                            ?>
+                        <?php } ?>
+                        <td class="py-3 px-6 text-left"><?= number_format($totalHargaKeseluruhan ?? 0, 2) ?></td>
                         <td class="py-3 px-6 text-left"><?= $transaction->transaksi_status ?></td>
                         <td class="py-3 px-6 text-left"><?= $transaction->transaksi_date ?></td>
                         <td class="py-3 px-6 text-left">
-                            <a href="index.php?modul=transaksi&fitur=view&transaksi_id=123">Lihat Detail</a>
+                            <a href="index.php?modul=transaksi&fitur=view&transaksi_id=<?php echo $transaction->transaksi_id; ?>">Lihat Detail</a>
                         </td>
                     </tr>
-                <?php endforeach; ?>
+                <?php } } ?>
             </tbody>
         </table>
     </main>
