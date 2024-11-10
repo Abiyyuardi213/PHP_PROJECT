@@ -2,22 +2,18 @@
 require_once 'models/model_transaksi.php';
 require_once 'models/model_user.php';
 require_once 'models/model_barang.php';
-require_once 'models/model_detailTransaksi.php';
 
-$obj_transaksi = new modelDetailTransaction();
-$userModel = new modelUser();
-$barangModel = new modelBarang();
+$transaksi_id = $_GET['transaksi_id'] ?? null;
 
-$transaction_id = $_GET['id'] ?? null;
-$transactionDetails = $obj_transaksi->getTransactionDetailById($transaction_id);
-
-if (empty($transactionDetails)) {
-    echo "Transaction not found.";
-    exit;
+if ($transaksi_id) {
+    $obj_transaksi = new modelTransaction();
+    $transaction = $obj_transaksi->getTransactionById($transaksi_id);
 }
 
-// Assuming the first item in $transactionDetails array contains general transaction information
-$firstDetail = $transactionDetails[0];
+if (!$transaction) {
+    echo "Transaksi tidak ditemukan.";
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -25,45 +21,35 @@ $firstDetail = $transactionDetails[0];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transaction Details</title>
+    <title>Detail Transaksi</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100">
-    <div class="container mx-auto p-6">
-        <h2 class="text-2xl font-bold mb-6">Transaction Details</h2>
+<body class="bg-gray-100 p-8">
+    <h1 class="text-2xl font-bold mb-4">Detail Transaksi ID: <?= $transaction->transaksi_id ?></h1>
+    <p>User: <?= $transaction->user_id->user_name ?></p>
+    <p>Tanggal: <?= $transaction->transaksi_date ?></p>
+    <p>Status: <?= $transaction->transaksi_status ?></p>
 
-        <div class="bg-white shadow-md rounded-lg p-6 mb-6">
-            <p><strong>Transaction ID:</strong> <?= htmlspecialchars($firstDetail->transaksi_id) ?></p>
-            <p><strong>User:</strong> <?= htmlspecialchars($userModel->getUserById($firstDetail->user_id)->user_name ?? 'Unknown User') ?></p>
-            <p><strong>Date:</strong> <?= htmlspecialchars($firstDetail->transaksi_date) ?></p>
-            <p><strong>Status:</strong> <?= htmlspecialchars($firstDetail->transaksi_status) ?></p>
-        </div>
-
-        <h3 class="text-xl font-semibold mb-4">Products</h3>
-        <table class="min-w-full bg-white border border-gray-300">
-            <thead>
-                <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                    <th class="py-3 px-6 text-left">Product Name</th>
-                    <th class="py-3 px-6 text-left">Quantity</th>
-                    <th class="py-3 px-6 text-left">Price</th>
-                    <th class="py-3 px-6 text-left">Total</th>
+    <h2 class="text-xl font-semibold mt-6 mb-2">Detail Barang:</h2>
+    <table class="min-w-full divide-y divide-gray-200">
+        <thead>
+            <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Barang</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Harga</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+            </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+            <?php foreach ($transaction->itemsDetail as $item) : ?>
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap"><?= $item->id_barang->barang_name ?></td>
+                    <td class="px-6 py-4 whitespace-nowrap"><?= number_format($item->price_barang) ?></td>
+                    <td class="px-6 py-4 whitespace-nowrap"><?= $item->quantity ?></td>
+                    <td class="px-6 py-4 whitespace-nowrap"><?= number_format($item->total_amount) ?></td>
                 </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($transactionDetails as $detail): ?>
-                    <tr class="border-t">
-                        <td class="py-3 px-6"><?= htmlspecialchars($barangModel->getBarangById($detail->barang_id)->barang_name ?? 'Unknown Product') ?></td>
-                        <td class="py-3 px-6"><?= htmlspecialchars($detail->jumlah_barang) ?></td>
-                        <td class="py-3 px-6"><?= number_format($detail->harga_barang, 2) ?></td>
-                        <td class="py-3 px-6"><?= number_format($detail->jumlah_barang * $detail->harga_barang, 2) ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-
-        <div class="mt-6">
-            <a href="index.php?modul=transaksi&fitur=list" class="bg-blue-500 text-white px-4 py-2 rounded-full">Back to List</a>
-        </div>
-    </div>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
 </body>
 </html>
