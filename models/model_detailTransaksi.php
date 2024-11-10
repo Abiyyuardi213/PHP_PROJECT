@@ -23,8 +23,8 @@ class modelDetailTransaction {
         $barang = $this->barangModel->getBarangById($barang_id);
         $transactionDetail = new DetailTransaksi(
             $transaksi_id, 
-            $this->getNextId(), // Perbaiki ID detail agar unik
-            $barang_id, 
+            $this->getNextId(), 
+            $barang, 
             $quantity, 
             $price_barang,
             $user_id

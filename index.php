@@ -287,13 +287,17 @@ switch ($modul) {
                             ];
                         }
                     }
-                
+                    // print_r($user_id);
+                    // echo '<pre>';
+                    // print_r($detailBarang);
+                    // echo '</pre>';
+
                     // Menambahkan transaksi
                     $obj_transaksi->addTransaksi($user_id, $transaction_date, $transaction_status, $detailBarang);
                 
                     // Menyimpan pesan sukses di session
                     $_SESSION['message'] = "Transaksi berhasil ditambahkan!";
-                    header('Location: index.php?modul=transaksi&fitur=list');
+                     header('Location: index.php?modul=transaksi&fitur=list');
                     exit();
                 }
                 // Mengambil data pengguna dan barang untuk ditampilkan di form

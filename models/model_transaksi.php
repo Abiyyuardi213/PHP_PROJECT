@@ -31,7 +31,7 @@ class modelTransaction {
         }
 
         // Membuat objek Transaksi baru dengan ID unik
-        $transaksi = new Transaksi($this->nextId++, $user->user_id, $transaction_date, $transaction_status);
+        $transaksi = new Transaksi($this->nextId++, $user, $transaction_date, $transaction_status);
 
         // Menambahkan detail barang ke transaksi
         foreach ($detailBarang as $detail) {
@@ -41,7 +41,7 @@ class modelTransaction {
                 $detailObj = new DetailTransaksi(
                     $transaksi->transaksi_id,
                     $this->transactionDetailModel->getNextId(), // Gunakan ID detail yang benar
-                    $detail['Id_Barang'],
+                    $barang,
                     $detail['Jumlah_Barang'],
                     $detail['Harga_Barang'],
                     $user_id
