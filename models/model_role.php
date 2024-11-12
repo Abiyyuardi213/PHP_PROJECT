@@ -25,6 +25,8 @@ class modelRole {
     public function initializeDefaultRole() {
         if (empty($this->roles)) {
             $this->addRole("Customer", "Member", 0, 1);
+            $this->addRole("Administrator", "Admin", 3500000, 1);
+            $this->addRole("Supervisor", "Manager", 6600000, 1);
         }
     }
 

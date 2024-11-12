@@ -65,8 +65,18 @@ $transactions = $obj_transaksi->getAllTransaction();
 
     <!-- Main content -->
     <main class="flex-grow p-6">
-        <header class="mb-6 flex justify-between items-center">
-            <h1 class="text-3xl font-semibold text-gray-700">Dashboard</h1>
+    <header class="mb-6 flex justify-between items-center">
+            <h1 class="text-3xl font-semibold text-gray-700">Transaction History</h1>
+
+            <div class="flex items-center space-x-4">
+                <button class="flex items-center bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-700 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 2a5 5 0 100 10 5 5 0 000-10zm0 12c-3.25 0-5 2.25-5 5h10c0-2.75-1.75-5-5-5z" clip-rule="evenodd"/>
+                    </svg>
+                    Abiyyu Ardilian
+                </button>
+                <button class="bg-red-500 text-white px-4 py-2 rounded-full transform transition hover:scale-105 hover:shadow-lg">Logout</button>
+            </div>
         </header>
 
         <?php if (isset($_SESSION['message'])): ?>
@@ -85,12 +95,12 @@ $transactions = $obj_transaksi->getAllTransaction();
         <table class="min-w-full bg-white border border-gray-300">
             <thead>
                 <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                    <th class="py-3 px-6 text-left">Transaction ID</th>
-                    <th class="py-3 px-6 text-left">User</th>
-                    <th class="py-3 px-6 text-left">Total Amount</th>
-                    <th class="py-3 px-6 text-left">Status</th>
-                    <th class="py-3 px-6 text-left">Date</th>
-                    <th class="py-3 px-6 text-left">Actions</th>
+                    <th class="py-3 px-6 text-center">Transaction ID</th>
+                    <th class="py-3 px-6 text-center">User</th>
+                    <th class="py-3 px-6 text-center">Total Amount</th>
+                    <th class="py-3 px-6 text-center">Status</th>
+                    <th class="py-3 px-6 text-center">Date</th>
+                    <th class="py-3 px-6 text-center">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -99,17 +109,19 @@ $transactions = $obj_transaksi->getAllTransaction();
                         $totalHargaKeseluruhan = 0;
                 ?>
                     <tr class="border-t">
-                        <td class="py-3 px-6 text-left"><?= $transaction->transaksi_id ?></td>
-                        <td class="py-3 px-6 text-left"><?= htmlspecialchars($transaction->user_id->user_name ?? 'Unknown User') ?></td>
+                        <td class="py-3 px-6 text-center"><?= $transaction->transaksi_id ?></td>
+                        <td class="py-3 px-6 text-center"><?= htmlspecialchars($transaction->user_id->user_name ?? 'Unknown User') ?></td>
                         <?php foreach ($transaction->itemsDetail as $detail) { 
                             $totalHargaKeseluruhan += $detail->total_amount; // Menambah ke total keseluruhan
                             ?>
                         <?php } ?>
-                        <td class="py-3 px-6 text-left"><?= number_format($totalHargaKeseluruhan ?? 0, 2) ?></td>
-                        <td class="py-3 px-6 text-left"><?= $transaction->transaksi_status ?></td>
-                        <td class="py-3 px-6 text-left"><?= $transaction->transaksi_date ?></td>
-                        <td class="py-3 px-6 text-left">
-                            <a href="index.php?modul=transaksi&fitur=view&transaksi_id=<?php echo $transaction->transaksi_id; ?>">Lihat Detail</a>
+                        <td class="py-3 px-6 text-center"><?= number_format($totalHargaKeseluruhan ?? 0, 2) ?></td>
+                        <td class="py-3 px-6 text-center"><?= $transaction->transaksi_status ?></td>
+                        <td class="py-3 px-6 text-center"><?= $transaction->transaksi_date ?></td>
+                        <td class="py-3 px-6 text-center">
+                            <a href="index.php?modul=transaksi&fitur=view&transaksi_id=<?php echo $transaction->transaksi_id; ?>" class="bg-blue-400 text-white px-4 py-2 rounded-full shadow-lg transform transition-all hover:scale-110 hover:bg-blue-500 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-yellow-300">
+                                Lihat Detail
+                            </a>
                         </td>
                     </tr>
                 <?php } } ?>

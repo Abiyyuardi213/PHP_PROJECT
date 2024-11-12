@@ -9,7 +9,7 @@
 <body class="bg-gray-100 flex">
     <aside class="w-64 bg-gradient-to-b from-blue-700 to-indigo-800 text-white min-h-screen flex flex-col shadow-lg">
         <div class="p-6 text-center">
-            <h2 class="text-3xl font-bold mb-4">Warehouse Managememt System</h2>
+            <h2 class="text-3xl font-bold mb-4">Warehouse Management System</h2>
         </div>
         <nav class="flex-grow px-4">
             <a href="index.php?modul=dashboard" class="flex items-center gap-2 py-3 px-4 rounded-lg hover:bg-indigo-700 transition-colors">

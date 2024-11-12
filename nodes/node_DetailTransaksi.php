@@ -6,8 +6,7 @@ class DetailTransaksi {
     public $quantity;
     public $price_barang;
     public $total_amount;
-    public $user_id;
-
+    public $user_id; //hapus
     public function __construct($transaksi_id, $id_detail, $id_barang, $quantity, $price_barang, $user_id) {
         $this->transaksi_id = $transaksi_id;
         $this->id_detail = $id_detail;

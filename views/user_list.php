@@ -51,7 +51,7 @@ $users = $obj_user->getAllUsers();
 
     <main class="flex-grow p-6">
         <header class="mb-6 flex justify-between items-center">
-            <h1 class="text-3xl font-semibold text-gray-700">Dashboard</h1>
+            <h1 class="text-3xl font-semibold text-gray-700">Manage User</h1>
 
             <!-- Profile and Logout -->
             <div class="flex items-center space-x-4">
@@ -59,7 +59,7 @@ $users = $obj_user->getAllUsers();
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M10 2a5 5 0 100 10 5 5 0 000-10zm0 12c-3.25 0-5 2.25-5 5h10c0-2.75-1.75-5-5-5z" clip-rule="evenodd"/>
                     </svg>
-                    John Doe
+                    Abiyyu Ardilian
                 </button>
                 <button class="bg-red-500 text-white px-4 py-2 rounded-full transform transition hover:scale-105 hover:shadow-lg">Logout</button>
             </div>

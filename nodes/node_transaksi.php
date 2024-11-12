@@ -6,7 +6,7 @@ class Transaksi {
     public $user_id;
     public $transaksi_date;
     public $transaksi_status;
-    public $itemsDetail;
+    public $itemsDetail;//hapus
 
     public function __construct($transaksi_id, $user_id, $transaksi_date, $transaksi_status) {
         $this->transaksi_id = $transaksi_id;
