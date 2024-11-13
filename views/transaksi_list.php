@@ -9,9 +9,8 @@ $userModel = new modelUser();
 $barangModel = new modelBarang();
 $obj_transaksi = new modelTransaction();
 
+// Mengambil semua transaksi
 $transactions = $obj_transaksi->getAllTransaction();
-
-
 ?>
 
 <!DOCTYPE html>
@@ -29,7 +28,6 @@ $transactions = $obj_transaksi->getAllTransaction();
             <h2 class="text-3xl font-bold mb-4">Warehouse Management System</h2>
         </div>
         <nav class="flex-grow px-4">
-            <!-- Links in Sidebar -->
             <a href="index.php?modul=dashboard" class="flex items-center gap-2 py-3 px-4 rounded-lg hover:bg-indigo-700 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11a1 1 0 11-2 0V9a1 1 0 112 0v4zm-1-7a1 1 0 100 2 1 1 0 000-2z"/>
@@ -46,7 +44,7 @@ $transactions = $obj_transaksi->getAllTransaction();
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 6a2 2 0 100-4 2 2 0 000 4zm-6 8a6 6 0 1112 0H4z" clip-rule="evenodd"/>
                 </svg>
-                <span>Manage User</span>
+                <span>Manage Users</span>
             </a>
             <a href="index.php?modul=barang&fitur=list" class="flex items-center gap-2 py-3 px-4 rounded-lg hover:bg-indigo-700 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" viewBox="0 0 20 20" fill="currentColor">
@@ -56,7 +54,7 @@ $transactions = $obj_transaksi->getAllTransaction();
             </a>
             <a href="index.php?modul=transaksi&fitur=list" class="flex items-center gap-2 py-3 px-4 rounded-lg hover:bg-indigo-700 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M6 2a1 1 0 00-1 1v14a1 1 0 001 1h8a1 1 0 001-1V3a1 1 0 00-1-1H6zM7 4h6v12H7V4zM9 9.5A1.5 1.5 0 1110.5 8 1.5 1.5 0 009 9.5zm3 3a1.5 1.5 0 10-1.5-1.5 1.5 1.5 0 001.5 1.5z"/>
+                    <path d="M6 2a1 1 0 00-1 1v14a1 1 0 001 1h8a1 1 0 001-1V3a1 1 0 00-1-1H6zM7 4h6v12H7V4zM9 9.5A1.5 1.5 0 1110.5 8 1.5 1.5 0 019 9.5zm3 3a1.5 1.5 0 10-1.5-1.5 1.5 1.5 0 001.5 1.5z"/>
                 </svg>
                 <span>Transaction</span>
             </a>
@@ -65,14 +63,10 @@ $transactions = $obj_transaksi->getAllTransaction();
 
     <!-- Main content -->
     <main class="flex-grow p-6">
-    <header class="mb-6 flex justify-between items-center">
+        <header class="mb-6 flex justify-between items-center">
             <h1 class="text-3xl font-semibold text-gray-700">Transaction History</h1>
-
             <div class="flex items-center space-x-4">
                 <button class="flex items-center bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-700 transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 2a5 5 0 100 10 5 5 0 000-10zm0 12c-3.25 0-5 2.25-5 5h10c0-2.75-1.75-5-5-5z" clip-rule="evenodd"/>
-                    </svg>
                     Abiyyu Ardilian
                 </button>
                 <button class="bg-red-500 text-white px-4 py-2 rounded-full transform transition hover:scale-105 hover:shadow-lg">Logout</button>
@@ -87,7 +81,7 @@ $transactions = $obj_transaksi->getAllTransaction();
         <?php endif; ?>
 
         <div class="mb-4 flex justify-end">
-            <a href="index.php?modul=transaksi&fitur=add" class="bg-gradient-to-r from-green-400 to-green-500 text-white px-5 py-2 rounded-full shadow-md transform transition hover:scale-105 hover:shadow-lg">
+            <a href="index.php?modul=transaksi&fitur=add" class="bg-gradient-to-r from-blue-400 to-green-500 text-white px-5 py-2 rounded-full shadow-md transform transition hover:scale-105 hover:shadow-lg">
                 Add New Transaction
             </a>
         </div>
@@ -106,24 +100,26 @@ $transactions = $obj_transaksi->getAllTransaction();
             <tbody>
                 <?php if (!empty($transactions)) {
                     foreach ($transactions as $transaction) { 
+                        $user = $userModel->getUserById($transaction->user_id); // Ambil data user
                         $totalHargaKeseluruhan = 0;
                 ?>
-                    <tr class="border-t">
-                        <td class="py-3 px-6 text-center"><?= $transaction->transaksi_id ?></td>
-                        <td class="py-3 px-6 text-center"><?= htmlspecialchars($transaction->user_id->user_name ?? 'Unknown User') ?></td>
-                        <?php foreach ($transaction->itemsDetail as $detail) { 
-                            $totalHargaKeseluruhan += $detail->total_amount; // Menambah ke total keseluruhan
-                            ?>
-                        <?php } ?>
-                        <td class="py-3 px-6 text-center"><?= number_format($totalHargaKeseluruhan ?? 0, 2) ?></td>
-                        <td class="py-3 px-6 text-center"><?= $transaction->transaksi_status ?></td>
-                        <td class="py-3 px-6 text-center"><?= $transaction->transaksi_date ?></td>
-                        <td class="py-3 px-6 text-center">
-                            <a href="index.php?modul=transaksi&fitur=view&transaksi_id=<?php echo $transaction->transaksi_id; ?>" class="bg-blue-400 text-white px-4 py-2 rounded-full shadow-lg transform transition-all hover:scale-110 hover:bg-blue-500 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-yellow-300">
-                                Lihat Detail
-                            </a>
-                        </td>
-                    </tr>
+                <tr class="border-b hover:bg-gray-100">
+                    <td class="py-3 px-6 text-center"><?= htmlspecialchars($transaction->transaksi_id) ?></td>
+                    <td class="py-3 px-6 text-center"><?= htmlspecialchars($user->user_name) ?></td>
+                    <?php foreach ($transaction->itemDetail as $detail) { 
+                        if (isset($detail->total_amount)) {
+                            $totalHargaKeseluruhan += $detail->total_amount;
+                        }
+                    } ?>
+                    <td class="py-3 px-6 text-center"><?= htmlspecialchars($totalHargaKeseluruhan) ?></td>
+                    <td class="py-3 px-6 text-center"><?= htmlspecialchars($transaction->transaksi_status) ?></td>
+                    <td class="py-3 px-6 text-center"><?= date("Y-m-d H:i:s", strtotime($transaction->transaksi_date)) ?></td>
+                    <td class="py-3 px-6 text-center">
+                        <a href="index.php?modul=transaksi&fitur=view&transaksi_id=<?= $transaction->transaksi_id ?>" class="bg-blue-400 text-white px-4 py-2 rounded-full shadow-lg transform transition-all hover:scale-110 hover:bg-blue-500 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-yellow-300">
+                            Lihat Detail
+                        </a>
+                    </td>
+                </tr>
                 <?php } } ?>
             </tbody>
         </table>

@@ -86,7 +86,6 @@ class modelRole {
                 return $role->role_id;
             }
         }
-        return null; // Role not found
+        return null;
     }
 }
-?>

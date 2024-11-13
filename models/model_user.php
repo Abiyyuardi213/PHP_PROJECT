@@ -98,6 +98,13 @@ class modelUser {
         }
         return null;
     }
-}
 
-?>
+    public function getUserNameById($user_id) {
+        foreach ($this->users as $user) {
+            if ($user->user_id == $user_id) {
+                return $user->user_name;
+            }
+        }
+        return "Unknown User";
+    }
+}

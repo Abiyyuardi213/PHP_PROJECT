@@ -80,11 +80,10 @@ class modelBarang {
     public function getBarangById($barang_id) {
         foreach ($this->barangs as $barang) {
             if ($barang->barang_id == $barang_id) {
-                // Return the Barang object itself instead of an array
                 return $barang;
             }
         }
-        return null; // Return null if not found
+        return null;
     }
 
     public function getBarangHargaById($barang_id) {
@@ -96,4 +95,3 @@ class modelBarang {
         return null;
     }
 }
-?>

@@ -1,6 +1,8 @@
 <?php
-require_once('nodes/node_transaksi.php');
-require_once('models/model_detailTransaksi.php');
+require_once 'nodes/node_transaksi.php';
+require_once 'models/model_detailTransaksi.php';
+require_once 'models/model_barang.php';
+require_once 'models/model_user.php';
 
 class modelTransaction {
     private $transactionList = [];
@@ -13,8 +15,7 @@ class modelTransaction {
         $this->transactionDetailModel = new modelDetailTransaction();
         $this->barangModel = new modelBarang();
         $this->userModel = new modelUser();
-    
-        // Memastikan bahwa data transaksi dalam session adalah array atau objek
+        
         if (isset($_SESSION['transaksi'])) {
             $this->transactionList = unserialize($_SESSION['transaksi']);
             $this->nextId = count($this->transactionList) + 1;
@@ -30,26 +31,22 @@ class modelTransaction {
             return false;
         }
 
-        // Membuat objek Transaksi baru dengan ID unik
-        $transaksi = new Transaksi($this->nextId++, $user, $transaction_date, $transaction_status);
-
-        // Menambahkan detail barang ke transaksi
+        $transaksi = new Transaksi($this->nextId++, $user_id, $transaction_date, $transaction_status);
+        $transaksi->itemDetail = $detailBarang;
+            
         foreach ($detailBarang as $detail) {
             $barang = $this->barangModel->getBarangById($detail['Id_Barang']); 
             if ($barang) {
-                // Membuat objek DetailTransaksi dan menambahkannya ke transaksi
                 $detailObj = new DetailTransaksi(
                     $transaksi->transaksi_id,
                     $this->transactionDetailModel->getNextId(), // Gunakan ID detail yang benar
                     $barang,
                     $detail['Jumlah_Barang'],
                     $detail['Harga_Barang'],
-                    $user_id
                 );
                 $transaksi->addDetailBarang($detailObj);
 
-                // Menambahkan detail ke model detail transaksi
-                $this->transactionDetailModel->addTransactionDetail($transaksi->transaksi_id, $detail['Id_Barang'], $detail['Jumlah_Barang'], $detail['Harga_Barang'], $user_id);
+                $this->transactionDetailModel->addTransactionDetail($transaksi, $detail['Id_Barang'], $detail['Jumlah_Barang'], $detail['Harga_Barang']);
             }
         }
 
@@ -59,20 +56,18 @@ class modelTransaction {
     }
 
     public function getTransactionById($transaksi_id) {
-        // Memastikan session transaksi sudah di-unserialize dengan benar
         if (isset($_SESSION['transaksi'])) {
             $transactions = unserialize($_SESSION['transaksi']);
         } else {
             $transactions = [];
         }
-    
-        // Memeriksa transaksi dalam array
+        
         foreach ($transactions as $transaksi) {
             if ($transaksi->transaksi_id == $transaksi_id) {
                 return $transaksi;
             }
         }
-        return null; // Jika transaksi tidak ditemukan
+        return null;
     }
 
     public function getAllTransaction() {
@@ -82,5 +77,4 @@ class modelTransaction {
     private function saveToSession() {
         $_SESSION['transaksi'] = serialize($this->transactionList);
     }
-    
 }

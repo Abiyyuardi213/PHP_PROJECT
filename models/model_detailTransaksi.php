@@ -1,6 +1,6 @@
 <?php
-require_once('nodes/node_DetailTransaksi.php');
-require_once('models/model_transaksi.php');
+require_once 'nodes/node_DetailTransaksi.php';
+require_once 'models/model_barang.php';
 
 class modelDetailTransaction {
     private $transactionDetails = [];
@@ -19,16 +19,17 @@ class modelDetailTransaction {
         return $this->nextId++;
     }
 
-    public function addTransactionDetail($transaksi_id, $barang_id, $quantity, $price_barang, $user_id) {
+    public function addTransactionDetail($transaksi, $barang_id, $quantity, $price_barang) {
         $barang = $this->barangModel->getBarangById($barang_id);
         $transactionDetail = new DetailTransaksi(
-            $transaksi_id, 
+            $transaksi->transaksi_id, 
             $this->getNextId(), 
             $barang, 
             $quantity, 
             $price_barang,
-            $user_id
         );
+
+        $user_id = $transactionDetail->getUserId($transaksi);
         $this->transactionDetails[] = $transactionDetail;
         $this->saveToSession();
     }
@@ -39,13 +40,11 @@ class modelDetailTransaction {
 
     public function getTransactionDetailById($transaction_id) {
         if (!$transaction_id) {
-            return []; // Kembalikan array kosong jika ID tidak ada
+            return [];
         }
 
-        // Misalnya menggunakan session atau database, contoh sederhana:
-        $transactionDetails = []; // Ambil detail transaksi berdasarkan ID (session atau DB)
+        $transactionDetails = [];
         
-        // Contoh data jika memakai session:
         if (isset($_SESSION['transactions'][$transaction_id])) {
             $transactionDetails = $_SESSION['transactions'][$transaction_id];
         }

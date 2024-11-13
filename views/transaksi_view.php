@@ -14,6 +14,17 @@ if (!$transaction) {
     echo "Transaksi tidak ditemukan.";
     exit;
 }
+
+$user_name = '';
+if ($transaction->user_id) {
+    $obj_user = new modelUser();
+    $user = $obj_user->getUserById($transaction->user_id);
+    if ($user) {
+        $user_name = $user->user_name;
+    } else {
+        $user_name = "Unknown User";
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -74,7 +85,7 @@ if (!$transaction) {
 
         <div class="bg-white p-5 rounded-lg shadow-lg max-w-4xl mt-8">
             <h1 class="text-2xl font-bold mb-4 text-gray-800">Detail Transaksi ID: <?= $transaction->transaksi_id ?></h1>
-            <p class="text-lg text-gray-600">User : <span class="font-semibold"><?= $transaction->user_id->user_name ?></span></p>
+            <p class="text-lg text-gray-600">User : <span class="font-semibold"><?= htmlspecialchars($user_name) ?></span></p>
             <p class="text-lg text-gray-600">Tanggal : <span class="font-semibold"><?= $transaction->transaksi_date ?></span></p>
             <p class="text-lg text-gray-600">Status : <span class="font-semibold text-green-600"><?= $transaction->transaksi_status ?></span></p>
         </div>
@@ -92,14 +103,28 @@ if (!$transaction) {
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    <?php foreach ($transaction->itemsDetail as $item) : ?>
-                        <tr class="hover:bg-gray-100 transition-colors">
-                            <td class="px-6 py-4 whitespace-nowrap text-gray-700"><?= $item->id_barang->barang_name ?></td>
-                            <td class="px-6 py-4 whitespace-nowrap text-gray-700"><?= number_format($item->price_barang) ?></td>
-                            <td class="px-6 py-4 whitespace-nowrap text-gray-700"><?= $item->quantity ?></td>
-                            <td class="px-6 py-4 whitespace-nowrap text-gray-700"><?= number_format($item->total_amount) ?></td>
+                    <?php 
+                    $barangTersedia = false;
+                    foreach ($transaction->itemDetail as $item) : 
+                        if (is_object($item) && isset($item->id_barang->barang_name)) :
+                            $barangTersedia = true;
+                    ?>
+                            <tr class="hover:bg-gray-100 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-700"><?= htmlspecialchars($item->id_barang->barang_name) ?></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-700"><?= number_format($item->price_barang) ?></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-700"><?= $item->quantity ?></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-700"><?= number_format($item->total_amount) ?></td>
+                            </tr>
+                    <?php 
+                        endif;
+                    endforeach;
+
+                    if (!$barangTersedia) : 
+                    ?>
+                        <tr>
+                            <td colspan="4" class="px-6 py-4 whitespace-nowrap text-gray-700">Data barang tidak tersedia</td>
                         </tr>
-                    <?php endforeach; ?>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>
